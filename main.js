@@ -3,7 +3,7 @@
 /* eslint-disable default-case */
 /* eslint-disable no-cond-assign */
 /* eslint-disable no-continue */
-const words = [];
+let words = [];
 
 function censor() {
   chrome.storage.local.get(['words'], (result) => {
@@ -52,7 +52,7 @@ form.innerHTML = `
 <div id="form-container">
   <h3>TRIGGER WARNING EXTENSION</h3>
   <form onsubmit="addWord(); return false;">
-  <label for="word" id="word-label">Word to censor:</label><br>
+  <label for="word" id="word-label">Enter a word to censor or press submit with no input to clear all words: </label><br>
   <input type="text" id="word" name="word"><br>
   <input type="submit" value="Submit" id="extension-submit-btn">
   </form>
@@ -76,7 +76,7 @@ style.innerText = `
   #word-label {
     font-weight: bold;
     margin-bottom: -1rem;
-    font-size: 18px !important;
+    font-size: 32px !important;
   }
 
   #extension-submit-btn {
@@ -97,12 +97,15 @@ form.addEventListener('submit', (e) => {
   const inputWord = document.querySelector('#word').value;
   if (inputWord !== '') {
     words.push(inputWord);
-    chrome.storage.local.set({words: words}, function() {
+    chrome.storage.local.set({ words: words }, () => {
       console.log('Words updated to: ', words);
-    })
+    });
+  } else {
+    chrome.storage.local.set({ words: [] }, () => {
+      console.log('Words cleared!');
+      location.reload();
+    });
   }
   document.querySelector('#word').value = '';
   censor();
 });
-
-censor();
