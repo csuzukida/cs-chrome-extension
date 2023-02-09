@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable default-case */
 /* eslint-disable no-cond-assign */
@@ -39,13 +40,14 @@ function censor() {
 }
 censor();
 
-const title = document.createElement('h3');
-title.setAttribute('id', 'extension-title');
-title.innerText = 'TRIGGER WARNING EXTENSION';
+// const title = document.createElement('h3');
+// title.setAttribute('id', 'extension-title');
+// title.innerText = 'TRIGGER WARNING EXTENSION';
 
 const form = document.createElement('form');
 form.innerHTML = `
-<div class="form-container">
+<div id="form-container">
+  <h3>TRIGGER WARNING EXTENSION</h3>
   <form onsubmit="addWord(); return false;">
   <label for="word" id="word-label">Word to censor:</label><br>
   <input type="text" id="word" name="word"><br>
@@ -56,12 +58,13 @@ form.innerHTML = `
 
 const style = document.createElement('style');
 style.innerText = `
-  .form-container {
+  #form-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
+    width: 500px;
+    margin: 50px auto;
 
   #extension-title {
     text-align: center;
@@ -70,19 +73,20 @@ style.innerText = `
   #word-label {
     font-weight: bold;
     margin-bottom: -1rem;
+    font-size: 18px !important;
   }
 
   #extension-submit-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    box-shadow: none;
-    font-weight: bold;
+    padding: 10px 20px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    font-weight: bold !important;
   }
 `;
 
 document.head.appendChild(style);
-document.body.appendChild(title);
+// document.body.appendChild(title);
 document.body.appendChild(form);
 
 form.addEventListener('submit', (e) => {
