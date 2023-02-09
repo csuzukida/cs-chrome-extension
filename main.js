@@ -2,17 +2,15 @@
 /* eslint-disable default-case */
 /* eslint-disable no-cond-assign */
 /* eslint-disable no-continue */
-const words = ['howdy'];
+const words = [];
 
 function censor() {
-  console.log('censor function called');
-  console.log(words);
   const queue = [document.body];
   let curr;
   const images = document.querySelectorAll('img');
   for (const image of images) {
     for (const word of words) {
-      if (image.alt.toLowerCase().match(word)) {
+      if (image.alt.toLowerCase().includes(word.toLowerCase())) {
         image.remove();
       }
     }
@@ -25,7 +23,7 @@ function censor() {
           switch (curr.childNodes[i].nodeType) {
             case Node.TEXT_NODE: // 3
               for (const word of words) {
-                if (curr.childNodes[i].textContent.toLowerCase().match(word)) {
+                if (curr.childNodes[i].textContent.toLowerCase().includes(word.toLowerCase())) {
                   curr.remove();
                 }
               }
@@ -39,18 +37,58 @@ function censor() {
     }
   }
 }
-
-function popupFunction() {
-  console.log('popup func running');
-  // document.querySelector('form').addEventListener('submit', (e) => {
-  // e.preventDefault();
-  const word = document.querySelector('#word').value;
-  document.querySelector('#word').value = '';
-  console.log(word);
-  words.push(word);
-  censor();
-  // });
-}
-
-// document.getElementById('submit_button').addEventListener('click', popupFunction());
 censor();
+
+const title = document.createElement('h3');
+title.setAttribute('id', 'extension-title');
+title.innerText = 'TRIGGER WARNING EXTENSION';
+
+const form = document.createElement('form');
+form.innerHTML = `
+<div class="form-container">
+  <form onsubmit="addWord(); return false;">
+  <label for="word" id="word-label">Word to censor:</label><br>
+  <input type="text" id="word" name="word"><br>
+  <input type="submit" value="Submit" id="extension-submit-btn">
+  </form>
+</div>
+`;
+
+const style = document.createElement('style');
+style.innerText = `
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #extension-title {
+    text-align: center;
+  }
+
+  #word-label {
+    font-weight: bold;
+    margin-bottom: -1rem;
+  }
+
+  #extension-submit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: none;
+    font-weight: bold;
+  }
+`;
+
+document.head.appendChild(style);
+document.body.appendChild(title);
+document.body.appendChild(form);
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const inputWord = document.querySelector('#word').value;
+  if (inputWord !== '') words.push(inputWord);
+  document.querySelector('#word').value = '';
+  censor();
+});
