@@ -6,43 +6,46 @@
 const words = [];
 
 function censor() {
-  const queue = [document.body];
-  let curr;
-  const images = document.querySelectorAll('img');
-  for (const image of images) {
-    for (const word of words) {
-      if (image.alt.toLowerCase().includes(word.toLowerCase())) {
-        image.remove();
+  chrome.storage.local.get(['words'], (result) => {
+    const words = result.words || [];
+    const queue = [document.body];
+    const images = document.querySelectorAll('img');
+    let curr;
+    for (const image of images) {
+      for (const word of words) {
+        if (image.alt.toLowerCase().includes(word.toLowerCase())) {
+          image.remove();
+        }
       }
-    }
-  }
-
-  while (curr = queue.pop()) {
-    for (const word of words) {
-      if (curr.textContent.toLowerCase().match(word)) {
-        for (let i = 0; i < curr.childNodes.length; i += 1) {
-          switch (curr.childNodes[i].nodeType) {
-            case Node.TEXT_NODE: // 3
-              for (const word of words) {
-                if (curr.childNodes[i].textContent.toLowerCase().includes(word.toLowerCase())) {
-                  curr.remove();
-                }
+      while (curr = queue.pop()) {
+        for (const word of words) {
+          if (curr.textContent.toLowerCase().match(word)) {
+            for (let i = 0; i < curr.childNodes.length; i += 1) {
+              switch (curr.childNodes[i].nodeType) {
+                case Node.TEXT_NODE: // 3
+                  for (const word of words) {
+                    if (curr.childNodes[i].textContent.toLowerCase().includes(word.toLowerCase())) {
+                      curr.remove();
+                    }
+                  }
+                  break;
+                case Node.ELEMENT_NODE: // 1
+                  queue.push(curr.childNodes[i]);
+                  break;
               }
-              break;
-            case Node.ELEMENT_NODE: // 1
-              queue.push(curr.childNodes[i]);
-              break;
+            }
           }
         }
       }
     }
-  }
+  });
 }
-censor();
 
-// const title = document.createElement('h3');
-// title.setAttribute('id', 'extension-title');
-// title.innerText = 'TRIGGER WARNING EXTENSION';
+chrome.storage.local.get(['words'], function(result) {
+  console.log(result);
+  words = result.words || [];
+  censor();
+});
 
 const form = document.createElement('form');
 form.innerHTML = `
@@ -92,7 +95,14 @@ document.body.appendChild(form);
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const inputWord = document.querySelector('#word').value;
-  if (inputWord !== '') words.push(inputWord);
+  if (inputWord !== '') {
+    words.push(inputWord);
+    chrome.storage.local.set({words: words}, function() {
+      console.log('Words updated to: ', words);
+    })
+  }
   document.querySelector('#word').value = '';
   censor();
 });
+
+censor();
