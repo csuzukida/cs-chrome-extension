@@ -13,7 +13,10 @@ function censor() {
     let curr;
     for (const image of images) {
       for (const word of words) {
-        if (image.alt.toLowerCase().includes(word.toLowerCase())) {
+        if (image
+          .alt
+          .toLowerCase()
+          .includes(word.toLowerCase())) {
           image.remove();
         }
       }
@@ -24,7 +27,10 @@ function censor() {
               switch (curr.childNodes[i].nodeType) {
                 case Node.TEXT_NODE: // 3
                   for (const word of words) {
-                    if (curr.childNodes[i].textContent.toLowerCase().includes(word.toLowerCase())) {
+                    if (curr.childNodes[i]
+                      .textContent
+                      .toLowerCase()
+                      .includes(word.toLowerCase())) {
                       curr.remove();
                     }
                   }
@@ -52,8 +58,8 @@ form.innerHTML = `
 <div id="form-container">
   <h3>TRIGGER WARNING EXTENSION</h3>
   <form onsubmit="addWord(); return false;">
-  <label for="word" id="word-label">Enter a word to censor or press submit with no input to clear all words: </label><br>
-  <input type="text" id="word" name="word"><br>
+  <label for="word" id="word-label">Submitting when blank will remove all previously censored words</label><br>
+  <input type="text" id="word" name="word" placeholder="Enter the word to censor here..."><br>
   <input type="submit" value="Submit" id="extension-submit-btn">
   </form>
 </div>
@@ -68,6 +74,9 @@ style.innerText = `
     align-items: center;
     width: 500px;
     margin: 50px auto;
+    border-radius: 10px;
+    background-color: lightgray;
+    padding: 10px;
 
   #extension-title {
     text-align: center;
@@ -76,7 +85,6 @@ style.innerText = `
   #word-label {
     font-weight: bold;
     margin-bottom: -1rem;
-    font-size: 32px !important;
   }
 
   #extension-submit-btn {
@@ -89,7 +97,6 @@ style.innerText = `
 `;
 
 document.head.appendChild(style);
-// document.body.appendChild(title);
 document.body.appendChild(form);
 
 form.addEventListener('submit', (e) => {
